@@ -1,0 +1,31 @@
+
+{% extends 'overlay_tool/base.html' %}
+{% block content %}
+  <h2>{{ mo.event_name }}</h2>
+  <p>Created: {{ mo.date_created }}</p>
+  {% if mo.qr_file %}
+    <p>QR: <a href="/{{ mo.qr_file }}" download>Download QR</a></p>
+  {% endif %}
+  <div id="map" style="height:85vh;"></div>
+
+  <script>
+    const gps = {
+      nw: {{ gps.nw|safe }},
+      ne: {{ gps.ne|safe }},
+      sw: {{ gps.sw|safe }},
+      se: {{ gps.se|safe }},
+    };
+
+    const south = Math.min(gps.sw[0], gps.se[0]);
+    const north = Math.max(gps.nw[0], gps.ne[0]);
+    const west = Math.min(gps.sw[1], gps.nw[1]);
+    const east = Math.max(gps.se[1], gps.ne[1]);
+
+    const map = L.map('map').fitBounds([[south, west],[north, east]]);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+
+    const imageUrl = '{{ mo.overlay_file.url }}';
+    const imageBounds = [[north, west],[south, east]];
+    L.imageOverlay(imageUrl, imageBounds).addTo(map);
+  </script>
+{% endblock %}

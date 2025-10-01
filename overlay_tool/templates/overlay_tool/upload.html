@@ -1,0 +1,38 @@
+
+{% extends 'overlay_tool/base.html' %}
+{% block content %}
+  <h2>Create / Upload Event Overlay</h2>
+
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+    {{ form.as_p }}
+    <p><strong>Map helper:</strong> Click two opposite corners on the small map below (first click = corner A, second click = opposite corner B). This fills NW/NE/SW/SE inputs.</p>
+    <div id="pickerMap" style="height:320px;border:1px solid #ccc;margin-bottom:10px"></div>
+    <button type="submit">Save event + generate QR</button>
+  </form>
+  <hr>
+  <a href="{% url 'dashboard' %}">Back to dashboard</a>
+
+  <script>
+    // Leaflet map picker (two clicks -> fills gps form fields)
+    const picker = L.map('pickerMap').setView([0,0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(picker);
+    let clicks = [], rect = null;
+    picker.on('click', function(e){
+      clicks.push(e.latlng);
+      if(clicks.length === 2){
+        const a = clicks[0], b = clicks[1];
+        const north = Math.max(a.lat, b.lat);
+        const south = Math.min(a.lat, b.lat);
+        const east = Math.max(a.lng, b.lng);
+        const west = Math.min(a.lng, b.lng);
+        document.querySelector('#id_gps_nw').value = north.toFixed(6)+','+west.toFixed(6);
+        document.querySelector('#id_gps_ne').value = north.toFixed(6)+','+east.toFixed(6);
+        document.querySelector('#id_gps_sw').value = south.toFixed(6)+','+west.toFixed(6);
+        document.querySelector('#id_gps_se').value = south.toFixed(6)+','+east.toFixed(6);
+        if(rect) picker.removeLayer(rect);
+        rect = L.rectangle([[south,west],[north,east]], {color:'#ff7800', weight:1}).addTo(picker);
+        clicks = [];
+      }
+    });
+  </script>
+{% endblock %}

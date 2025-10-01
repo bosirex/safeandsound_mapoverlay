@@ -1,0 +1,8 @@
+
+{% extends 'overlay_tool/base.html' %}
+{% block content %}
+  <h2>Delete {{ mo.event_name }}</h2>
+  <p>Are you sure? This will remove the database entry and uploaded files.</p>
+  <form method="post">{% csrf_token %}<button type="submit">Delete</button></form>
+  <a href="{% url 'dashboard' %}">Cancel</a>
+{% endblock %}

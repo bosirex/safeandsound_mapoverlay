@@ -1,0 +1,21 @@
+
+{% extends 'base.html' %}
+{% block content %}
+  <a href="{% url 'cards_home' %}" class="btn btn-secondary">← Back to Cards</a>
+  <h2>Library Dashboard</h2>
+  <a href="{% url 'upload_overlay' %}">Create new event</a>
+  <table border="1" cellpadding="6" cellspacing="0" style="margin-top:10px;">
+    <tr><th>Event</th><th>Date</th><th>Preview</th><th>QR</th><th>Actions</th></tr>
+    {% for e in overlays %}
+    <tr>
+      <td>{{ e.event_name }}</td>
+      <td>{{ e.date_created }}</td>
+      <td><a href="{% url 'view_overlay' e.id %}">Preview</a></td>
+      <td>{% if e.qr_file %}<a href="/{{ e.qr_file }}" download>Download QR</a>{% else %}&mdash;{% endif %}</td>
+      <td><a href="{% url 'edit_overlay' e.id %}">Edit</a> | <a href="{% url 'delete_overlay' e.id %}">Delete</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No events yet</td></tr>
+    {% endfor %}
+  </table>
+{% endblock %}
