@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'change-this-in-production'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['51.20.42.8','127.0.0.1', 'localhost']
 
 INSTALLED_APPS = [
     'cards',
